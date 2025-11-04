@@ -1,7 +1,6 @@
 package com.example.msd25_android
 
 import android.os.Bundle
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,12 +11,11 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.example.msd25_android.ui.theme.MSD25_AndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,52 +30,51 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@PreviewScreenSizes
 @Composable
 fun MSD25_AndroidApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
-    NavigationSuiteScaffold(
-        containerColor = MaterialTheme.colorScheme.primary,      // #2E6930 (nav bar background)
-        contentColor = MaterialTheme.colorScheme.onPrimary,      // #0F2310 (icon/text color)
-
-        navigationSuiteItems = {
-            AppDestinations.entries.forEach {
-                item(
-                    icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label,
-                            tint = if (it == currentDestination)
-                                MaterialTheme.colorScheme.onPrimary
-                            else
-                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
-                        )
-                    },
-                    label = {
-                        Text(
-                            it.label,
-                            color = if (it == currentDestination)
-                                MaterialTheme.colorScheme.onPrimary
-                            else
-                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
-                        )
-                    },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
-                )
+    Scaffold(
+        bottomBar = {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.primary,   // #2E6930
+                contentColor = MaterialTheme.colorScheme.onPrimary    // #0F2310
+            ) {
+                AppDestinations.entries.forEach { destination ->
+                    NavigationBarItem(
+                        selected = destination == currentDestination,
+                        onClick = { currentDestination = destination },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label,
+                                tint = if (destination == currentDestination)
+                                    MaterialTheme.colorScheme.onPrimary
+                                else
+                                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
+                            )
+                        },
+                        label = {
+                            Text(
+                                destination.label,
+                                color = if (destination == currentDestination)
+                                    MaterialTheme.colorScheme.onPrimary
+                                else
+                                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
+                            )
+                        }
+                    )
+                }
             }
-        }
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.background // #CCE7C9
-        ) { inner ->
-            Greeting(
-                name = "Julius",
-                modifier = Modifier.padding(inner)
-            )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background // #CCE7C9
+    ) { innerPadding ->
+        Greeting(
+            name = "Julius",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
     }
 }
 
